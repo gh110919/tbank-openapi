@@ -3,7 +3,6 @@
   "dependencies": {
     "@lit-labs/ssr": "^3.2.2",
     "axios": "^1.7.9",
-    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "lit": "^3.2.1",
     "nodemon": "^3.1.9",

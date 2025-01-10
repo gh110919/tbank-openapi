@@ -1,0 +1,59 @@
+import { mainAPI } from "../../../utils/api";
+import { environment } from "../../../utils/environment";
+
+type TReturn<T> = Promise<{
+  success: boolean;
+  message: T;
+}>;
+
+type TMessage<T> = {
+  data: T;
+};
+
+type TRequest = {
+  TerminalKey: string;
+  CustomerKey: string;
+  Token: string;
+  CheckType: string;
+  IP: string;
+  ResidentState: boolean;
+};
+
+type TResponse = {
+  PaymentId: number;
+  TerminalKey: string;
+  CustomerKey: string;
+  RequestKey: string;
+  ErrorCode: string;
+  Success: boolean;
+  Message: string;
+  Details: string;
+  PaymentURL: string;
+};
+
+type TParams<T> = Partial<{
+  data: T;
+}>;
+/*  */
+export const addCard = async (
+  params?: TParams<TRequest>
+): TReturn<TMessage<TResponse>> => {
+  const { data } = params!;
+
+  const { API_VERSION, TOKEN_JWT } = environment;
+
+  const url = `/${API_VERSION}/AddCard`;
+
+  const headers = {
+    Authorization: `Bearer ${TOKEN_JWT}`,
+  };
+
+  try {
+    return {
+      success: true,
+      message: await mainAPI.post(url, data, { headers }),
+    };
+  } catch (error) {
+    throw new Error(String(error));
+  }
+};

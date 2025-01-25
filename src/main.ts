@@ -1,50 +1,53 @@
+import { cancel } from "API_V2/accepting-card-payments/cancel-a-payment/cancel";
+import { init } from "API_V2/accepting-card-payments/standard-payment/init";
+import { environment } from "UTILS/environment";
+import { tokenizer } from "UTILS/tokenizer";
 import { v4 } from "uuid";
-import { _3DSMethod } from "./api-v2/3ds-method";
-import { init } from "./api-v2/init";
-import { environment } from "./utils/environment";
-import { tokenizer } from "./utils/tokenizer";
 
 (async function (): Promise<void> {
   try {
-    const { TERMINAL_KEY, TERMINAL_PASSWORD } = environment;
+    const { TERMINAL_KEY, TERMINAL_PASSWORD, PHONE, EMAIL } = environment;
 
     const initParams = {
-      data: {
-        TerminalKey: TERMINAL_KEY,
-        Amount: 100,
-        OrderId: v4(),
-        Description: "тест",
-        DATA: {
-          Phone: "+71234567890",
-          Email: "a@test.com",
-        },
-        Receipt: {
-          Email: "a@test.com",
-          Phone: "+71234567890",
-          Taxation: "osn",
-          Items: [],
-        },
+      TerminalKey: TERMINAL_KEY,
+      Amount: 10000,
+      OrderId: v4(),
+      Description: "тест",
+      DATA: {
+        Phone: PHONE,
+        Email: EMAIL,
+      },
+      Receipt: {
+        Email: EMAIL,
+        Phone: PHONE,
+        Taxation: "osn",
+        Items: [
+          {
+            Name: "Наименование товара 1",
+            Price: 10000,
+            Quantity: 1.0,
+            Amount: 10000,
+            Tax: "none",
+          },
+        ],
       },
     };
 
     const init_ = await init({
       data: {
-        ...initParams.data,
-        Token: tokenizer(initParams.data, TERMINAL_PASSWORD),
+        ...initParams,
+        Token: tokenizer(initParams, TERMINAL_PASSWORD),
       },
     });
 
-    // console.log('init_', init_.message);
+    const cancel_data = { TerminalKey: TERMINAL_KEY, PaymentId: "5703784160" };
 
-    const _3DSMethod_ = await _3DSMethod({
+    const cancel_ = await cancel({
       data: {
-        threeDSServerTransID: "56e712a5-190a-4588-91bc-e08626e77c44",
-        threeDSMethodNotificationURL:
-          "https://rest-api-test.tinkoff.ru/v2/Complete3DSMethodv2",
+        ...cancel_data,
+        Token: tokenizer(cancel_data, TERMINAL_PASSWORD),
       },
     });
-
-    // console.log(_3DSMethod_.message);
   } catch (error) {
     console.log("error", error);
   }

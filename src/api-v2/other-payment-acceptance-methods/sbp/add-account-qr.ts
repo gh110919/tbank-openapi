@@ -1,6 +1,5 @@
-import axios from "axios";
-import { mainAPI } from "../../../utils/api";
-import { environment } from "../../../utils/environment";
+import { mainAPI } from "UTILS/api";
+import { environment } from "UTILS/environment";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -43,18 +42,12 @@ export const addAccountQr = async (
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/AddAccountQr`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/AddAccountQr`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

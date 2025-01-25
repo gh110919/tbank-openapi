@@ -1,8 +1,8 @@
 import { html } from "lit";
-import { mainAPI } from "../../utils/api";
-import { environment } from "../../utils/environment";
-import { litRTS } from "../utils/lit-render";
-import { tokenizer } from "../../utils/tokenizer";
+import { mainAPI } from "UTILS/api";
+import { environment } from "UTILS/environment";
+import { litRTS } from "UTILS/lit-rts";
+import { tokenizer } from "UTILS/tokenizer";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -34,13 +34,23 @@ type TParams<T> = Partial<{
   PaymentId: string;
   TerminalKey: string;
 }>;
-/*  */
+/**
+Для мерчантов, использующих собственную платежную форму
+
+Проверяет результаты прохождения 3-D Secure и при успешном прохождении подтверждает инициированный платеж. При использовании:
+
+одностадийной оплаты — списывает денежные средства с карты клиента;
+двухстадийной оплаты — блокирует указанную сумму на карте клиента.
+Формат запроса — x-www-form-urlencoded.
+
+После того, как мерчант получит ответ ACS с результатами прохождения 3-D Secure на cresCallbackUrl, нужно отправить запрос через метод Submit3DSAuthorizationV2.
+*/
 export const submit3DSAuthorizationV2 = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
-  const { API_VERSION, TOKEN_JWT, TERMINAL_PASSWORD } = environment;
+  const { TERMINAL_PASSWORD } = environment;
 
-  const url = `/${API_VERSION}/Submit3DSAuthorizationV2`;
+  const url = `/Submit3DSAuthorizationV2`;
 
   const token = tokenizer(params?.data, TERMINAL_PASSWORD);
 
@@ -60,14 +70,10 @@ export const submit3DSAuthorizationV2 = async (
     `
   );
 
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
-
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

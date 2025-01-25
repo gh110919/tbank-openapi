@@ -6,6 +6,7 @@
     "dotenv": "^16.4.7",
     "lit": "^3.2.1",
     "nodemon": "^3.1.9",
+    "typescript": "^5.7.3",
     "uuid": "^11.0.4"
   },
   "description": "",

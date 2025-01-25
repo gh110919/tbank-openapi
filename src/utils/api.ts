@@ -1,6 +1,8 @@
 import axios from "axios";
+import { environment } from "./environment";
+
+const { BASE_URL, API_VERSION } = environment;
 
 export const mainAPI = axios.create({
-  baseURL: "https://rest-api-test.tinkoff.ru",
-  withCredentials: true,
+  baseURL: `${BASE_URL}/${API_VERSION}`,
 });

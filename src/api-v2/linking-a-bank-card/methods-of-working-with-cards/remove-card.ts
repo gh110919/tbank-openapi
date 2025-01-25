@@ -1,5 +1,4 @@
 import axios from "axios";
-import { environment } from "../../../utils/environment";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -33,24 +32,20 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Метод для удаления привязанной карты клиента.
+ */
 export const removeCard = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/RemoveCard`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/RemoveCard`;
 
   try {
     return {
       success: true,
-      message: await axios.post(url, data, { headers }),
+      message: await axios.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

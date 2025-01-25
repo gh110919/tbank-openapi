@@ -1,5 +1,5 @@
-import { mainAPI } from "../../../utils/api";
-import { environment } from "../../../utils/environment";
+import { JSDocParsingMode } from "typescript";
+import { mainAPI } from "UTILS/api";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -30,7 +30,7 @@ type TRequest = {
       Quantity: number;
       Amount: number;
       Tax: string;
-      Ean13: string;
+      Ean13?: string;
     }[];
   };
 };
@@ -47,26 +47,22 @@ type TResponse = {
 };
 
 type TParams<T> = Partial<{
-  data: T;
+  data: Partial<T>;
 }>;
-/* Метод инициирует платежную сессию */
+/**
+ * Метод инициирует платежную сессию.
+ */
 export const init = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
-
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/Init`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  
+  const url = `/Init`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

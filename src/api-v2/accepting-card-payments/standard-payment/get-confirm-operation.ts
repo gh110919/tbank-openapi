@@ -1,5 +1,4 @@
-import { mainAPI } from "../../utils/api";
-import { environment } from "../../utils/environment";
+import { mainAPI } from "UTILS/api";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -32,24 +31,24 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Справку по конкретной операции можно получить на:
+
+URL-сервиса, который развернут на вашей стороне;
+электронную почту.
+Чтобы сформировать токен, нужно использовать только PASSWORD и TERMINAL_KEY.
+*/
 export const getConfirmOperation = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/getConfirmOperation`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/getConfirmOperation`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

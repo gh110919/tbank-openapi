@@ -1,0 +1,1 @@
+[T-Банк ИПП](https://www.tbank.ru/kassa/dev/payments)

@@ -1,6 +1,4 @@
-import axios from "axios";
-import { mainAPI } from "../../../utils/api";
-import { environment } from "../../../utils/environment";
+import { mainAPI } from "UTILS/api";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -33,24 +31,21 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Для мерчантов, использующих собственную платежную форму
+Метод возвращает статус привязки карты
+ */
 export const getAddCardState = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/GetAddCardState`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/GetAddCardState`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

@@ -1,5 +1,4 @@
-import { mainAPI } from "../../../utils/api";
-import { environment } from "../../../utils/environment";
+import { mainAPI } from "UTILS/api";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -110,24 +109,21 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Метод для списания заблокированных денежных средств. Используется при двухстадийном проведении платежа. Применим только к платежам в статусе AUTHORIZED. Статус транзакции перед разблокировкой — CONFIRMING. Сумма списания может быть меньше или равна сумме авторизации.
+Подробнее про двухстадийный платеж https://www.tbank.ru/kassa/dev/payments/#tag/Scenarii-oplaty-po-karte/Scenarii-platezha
+*/
 export const confirm = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/Confirm`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/Confirm`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

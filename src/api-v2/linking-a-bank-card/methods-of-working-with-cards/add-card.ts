@@ -1,5 +1,4 @@
-import { mainAPI } from "../../../utils/api";
-import { environment } from "../../../utils/environment";
+import { mainAPI } from "UTILS/api";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -34,24 +33,22 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Для мерчантов, использующих собственную платежную форму
+
+Метод инициирует привязку карты к клиенту. При успешной привязке переадресует клиента на Success Add Card URL, при неуспешной — на Fail Add Card URL. Можно использовать форму Т‑Кассы или заменить её на кастомную.
+ */
 export const addCard = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/AddCard`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/AddCard`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

@@ -1,5 +1,5 @@
-import axios from "axios";
-import { mainAPI } from "../../../utils/api";
+import { mainAPI } from "UTILS/api";
+import { environment } from "UTILS/environment";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -33,24 +33,20 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+ * Передача уведомления о событии платежного виджета T‑Pay + T‑ID.
+ */
 export const tinkoffPayEvent = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/TinkoffPayEvent`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/TinkoffPayEvent`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

@@ -1,6 +1,5 @@
-import axios from "axios";
-import { mainAPI } from "../utils/api";
-import { environment } from "../utils/environment";
+import { mainAPI } from "UTILS/api";
+import { environment } from "UTILS/environment";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -92,24 +91,24 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Метод позволяет отправить закрывающий чек в кассу. Условия работы метода:
+
+Закрывающий чек может быть отправлен, если платежная сессия по первому чеку находится в статусе CONFIRMED.
+В платежной сессии был передан объект Receipt.
+В объекте Receipt был передан хотя бы один объект — Receipt.Items.PaymentMethod = full_prepayment, prepayment или advance.
+ */
 export const sendClosingReceipt = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { TOKEN_JWT } = environment;
-
   const url = `/cashbox/SendClosingReceipt`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

@@ -1,6 +1,5 @@
-import axios from "axios";
-import { mainAPI } from "../../utils/api";
-import { environment } from "../../utils/environment";
+import { mainAPI } from "UTILS/api";
+import { environment } from "UTILS/environment";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -157,24 +156,38 @@ type TResponse = null;
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Метод для получения уведомлений об изменении статуса платежа. Реализуется на стороне мерчанта.
+
+Уведомление о привязке (NotificationAddCard)
+
+Для мерчантов, использующих собственную платежную форму
+
+Уведомления магазину о статусе выполнения метода привязки карты — AttachCard. После успешного выполнения метода AttachCard Т‑Касса отправляет POST-запрос с информацией о привязке карты. Уведомление отправляется на ресурс мерчанта на адрес Notification URL синхронно и ожидает ответа в течение 10 секунд. После получения ответа или не получения его за заданное время сервис переадресует клиента на Success AddCard URL или Fail AddCard URL — в зависимости от результата привязки карты. В случае успешной обработки нотификации мерчант должен вернуть ответ с телом сообщения OK — без тегов, заглавными английскими буквами.
+
+Если тело сообщения отлично от OK, любая нотификация считается неуспешной, и сервис будет повторно отправлять нотификацию раз в час в течение 24 часов. Если за это время нотификация так и не доставлена, она складывается в дамп.
+
+Нотификация о фискализации (NotificationFiscalization)
+
+Если используется подключенная онлайн касса, по результату фискализации будет отправлена нотификация с фискальными данными. Такие нотификации не отправляются маркетплейсам.
+
+Нотификация о статусе привязки счета по QR (NotificationQr)
+
+После привязки счета по QR магазину отправляется статус привязки и токен. Нотификация будет приходить по статусам ACTIVE и INACTIVE.
+ */
 export const notification = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
+  const { API_VERSION } = environment;
 
   const url = `http://api.merchant-site.com/${API_VERSION}/Notification`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

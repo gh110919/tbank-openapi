@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "paths": {
+      "API_V2/*": ["./src/api-v2/*"],
+      "CASHBOX/*": ["./src/cashbox/*"],
+      "UTILS/*": ["./src/utils/*"]
+    },
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2024"
+  }
+}

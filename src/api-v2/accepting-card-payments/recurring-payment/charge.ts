@@ -1,5 +1,4 @@
-import { mainAPI } from "../../../utils/api";
-import { environment } from "../../../utils/environment";
+import { mainAPI } from "UTILS/api";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -33,24 +32,26 @@ type TResponse = {
 type TParams<T> = Partial<{
   data: T;
 }>;
-/*  */
+/**
+Метод проводит рекуррентный (повторный) платеж — безакцептное списание денежных средств со счета банковской карты клиента. Чтобы его использовать, клиент должен совершить хотя бы один платеж в пользу мерчанта, который должен быть указан как рекуррентный (параметр Recurrent методе Init), но фактически являющийся первичным.
+
+После завершения оплаты в уведомлении на AUTHORIZED или CONFIRMED будет передан параметр RebillId.
+
+В дальнейшем для проведения рекуррентного платежа мерчант должен вызвать метод Init, указать нужную сумму для списания в параметре Amount, а затем без переадресации на PaymentURL вызвать метод Charge для оплаты по тем же реквизитам и передать параметр RebillId, полученный при совершении первичного платежа.
+
+Метод Charge работает по одностадийной и двухстадийной схеме оплаты. Чтобы перейти на двухстадийную схему, нужно переключить терминал в личном кабинете и написать на acq_help@tbank.ru с просьбой переключить схему рекуррентов.
+ */
 export const charge = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/Charge`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/Charge`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));

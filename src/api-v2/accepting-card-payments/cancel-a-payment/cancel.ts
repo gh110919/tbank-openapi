@@ -1,5 +1,4 @@
-import { mainAPI } from "../../../utils/api";
-import { environment } from "../../../utils/environment";
+import { mainAPI } from "UTILS/api";
 
 type TReturn<T> = Promise<{
   success: boolean;
@@ -110,26 +109,31 @@ type TResponse = {
 };
 
 type TParams<T> = Partial<{
-  data: T;
+  data: Partial<T>;
 }>;
-/*  */
+/**
+Отменяет платежную сессию. В зависимости от статуса платежа, переводит его в следующие состояния:
+
+NEW — CANCELED;
+AUTHORIZED — PARTIAL_REVERSED, если отмена не на полную сумму;
+AUTHORIZED — REVERSED, если отмена на полную сумму;
+CONFIRMED — PARTIAL_REFUNDED, если отмена не на полную сумму;
+CONFIRMED — REFUNDED, если отмена на полную сумму.
+При оплате в рассрочку платеж можно отменить только в статусе AUTHORIZED. При оплате «Долями» делается частичный или полный возврат, если операция в статусе CONFIRMED или PARTIAL_REFUNDED.
+
+Если платеж находился в статусе AUTHORIZED, холдирование средств на карте клиента отменяется. При переходе из статуса CONFIRMED денежные средства возвращаются на карту клиента.
+ */
 export const cancel = async (
   params?: TParams<TRequest>
 ): TReturn<TMessage<TResponse>> => {
   const { data } = params!;
 
-  const { API_VERSION, TOKEN_JWT } = environment;
-
-  const url = `/${API_VERSION}/Cancel`;
-
-  const headers = {
-    Authorization: `Bearer ${TOKEN_JWT}`,
-  };
+  const url = `/Cancel`;
 
   try {
     return {
       success: true,
-      message: await mainAPI.post(url, data, { headers }),
+      message: await mainAPI.post(url, data),
     };
   } catch (error) {
     throw new Error(String(error));
